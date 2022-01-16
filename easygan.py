@@ -54,10 +54,12 @@ class GAN():
         return discriminator
 
 
-    def train(self,epochs,data,rows,columns):
+    def train(self,epochs,data):
+        epoches = 0 
+        fig = plt.figure()
         for epoch in range(epochs):
-            fig = plt.figure()
-            epoches = 0 
+            
+            
             for images in data:
                 seed = np.random.normal(0,1,(self.batch_size,20))
                 images = images.reshape(self.batch_size,self.width,self.height,self.channels)
@@ -72,18 +74,15 @@ class GAN():
                 epoches += 1
                 print(epoches)
                 if epoches%100 == 0:
-                    seed = np.random.normal(0,1,(self.batch_size,20))
+                    seed = np.random.normal(0,1,(5,20))
                     fake_images = self.generator.predict(seed)
-                    fake_images = fake_images.reshape(self.batch_size,self.width,self.height,self.channels)
+                    fake_images = fake_images.reshape(5,self.width,self.height,self.channels)
 
-                    for n in range(self.batch_size):
+                    for n in range(5):
                         img = fake_images[n]
-                        img = img.reshape(28,28)
-                        img = img*255
-                        plt.subplot(rows,columns,n+1)
-                        plt.imshow(img)
-
-                    
+                        img = img.reshape(self.width,self.height,self.channels)                        
+                        plt.subplot(1,5,n+1)
+                        plt.imshow(img)                    
                     plt.draw()
                     plt.pause(0.1)
                     fig.clear()
