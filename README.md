@@ -20,3 +20,9 @@ x = x.reshape(3000,20,28,28,1)
 gan = GAN(20,28,28,1)
 gan.train(2, x,5,4)
 ```
+
+# Explanation of Example
+
+You can see we sliced 60000 mnist train datas to 3000x20. 20 is our batch size. Batch size is meaning how many images can use at a train step.
+Then GAN start plotting images when training. You will see plotted images look alike data images. Plotted images are predictions of image generator.
+I hope you can understand other parts of example.
