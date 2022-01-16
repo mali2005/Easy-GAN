@@ -18,7 +18,7 @@ x = x.reshape(3000,20,28,28,1)
 
 
 gan = GAN(20,28,28,1)
-gan.train(2, x,5,4)
+gan.train(2, x)
 ```
 
 # Explanation of Example
