@@ -157,9 +157,9 @@ class SuperGAN():
                 epoches += 1
                 print(epoches)
                 if epoches % 100 == 0:
-                    seed = np.random.normal(0, 1, (5, 20))
+                    seed = np.random.normal(0, 1, (25, 20))
                     fake_images = self.generator.predict(seed)
-                    fake_images = fake_images.reshape(5, self.width, self.height, self.channels)
+                    fake_images = fake_images.reshape(25, self.width, self.height, self.channels)
 
                     for n in range(25):
                         img = fake_images[n]
