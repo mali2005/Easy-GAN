@@ -77,7 +77,10 @@ class GAN():
 
                     for n in range(5):
                         img = fake_images[n]
-                        img = img.reshape(self.width, self.height, self.channels)
+                        if self.channels == 3:
+                            img = img.reshape(self.width, self.height, self.channels)
+                        else:
+                            img = img.reshape(self.width, self.height)
                         plt.subplot(1, 5, n + 1)
                         plt.imshow(img)
                     plt.draw()
@@ -163,7 +166,10 @@ class SuperGAN():
 
                     for n in range(25):
                         img = fake_images[n]
-                        img = img.reshape(self.width, self.height, self.channels)
+                        if self.channels == 3:
+                            img = img.reshape(self.width, self.height, self.channels)
+                        else:
+                            img = img.reshape(self.width, self.height)
                         plt.subplot(5, 5, n + 1)
                         plt.imshow(img)
                     plt.draw()
