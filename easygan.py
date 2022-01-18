@@ -108,13 +108,13 @@ class SuperGAN():
         generator = keras.models.Sequential([
             keras.layers.Dense(8 * 8 * 4),
             keras.layers.Reshape((8, 8, 4)),
-            keras.layers.Conv2DTranspose(16, kernel_size=4, strides=2, padding="same"),
+            keras.layers.Conv2DTranspose(64, kernel_size=4, strides=2, padding="same"),
             keras.layers.LeakyReLU(alpha=0.2),
             keras.layers.BatchNormalization(momentum=0.5),
-            keras.layers.Conv2DTranspose(16, kernel_size=4, strides=2, padding="same"),
+            keras.layers.Conv2DTranspose(64, kernel_size=4, strides=2, padding="same"),
             keras.layers.LeakyReLU(alpha=0.2),
             keras.layers.BatchNormalization(momentum=0.5),
-            keras.layers.Conv2DTranspose(16, kernel_size=4, strides=2, padding="same"),
+            keras.layers.Conv2DTranspose(64, kernel_size=4, strides=2, padding="same"),
             keras.layers.LeakyReLU(alpha=0.2),
             keras.layers.BatchNormalization(momentum=0.5),
             keras.layers.Conv2D(3, kernel_size=4, padding="same"),
@@ -133,9 +133,9 @@ class SuperGAN():
             keras.layers.Dense(8*8*8),
             keras.layers.Reshape((8,8,8)),
             keras.layers.LeakyReLU(alpha=0.2),
-            keras.layers.Conv2D(16, kernel_size=4, strides=2, padding="same"),
+            keras.layers.Conv2D(64, kernel_size=4, strides=2, padding="same"),
             keras.layers.LeakyReLU(alpha=0.2),
-            keras.layers.Conv2D(16, kernel_size=4, strides=2, padding="same"),
+            keras.layers.Conv2D(64, kernel_size=4, strides=2, padding="same"),
             keras.layers.LeakyReLU(alpha=0.2),
             keras.layers.Flatten(),
             keras.layers.Dropout(0.2),
@@ -161,6 +161,7 @@ class SuperGAN():
                 self.discriminator.train_on_batch(images, np.ones((self.batch_size, 1)))
                 self.combined.train_on_batch(seed, np.ones((self.batch_size, 1)))
                 epoches += 1
+                
                 if epoches % 100 == 0:
                     seed = np.random.normal(0, 1, (25, 100))
                     fake_images = self.generator.predict(seed)
@@ -173,7 +174,9 @@ class SuperGAN():
                         else:
                             img = img.reshape(self.width, self.height)
                         plt.subplot(5, 5, n + 1)
+
                         plt.imshow(img)
-                    plt.draw()
+                    fig.canvas.draw()
                     plt.pause(0.1)
+                    plt.savefig(str(epoches)+'.png')
                     fig.clear()
