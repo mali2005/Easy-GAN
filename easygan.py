@@ -17,7 +17,7 @@ class GAN():
         self.discriminator = self.build_discriminator()
         self.discriminator.compile(optimizer="adam", loss="binary_crossentropy", metrics="accuracy")
         self.discriminator.trainable = False
-        combine_in = keras.layers.Input(shape=(20))
+        combine_in = keras.layers.Input(shape=(100))
         generated = self.generator(combine_in)
         combine_out = self.discriminator(generated)
         self.combined = keras.Model(combine_in, combine_out)
@@ -25,7 +25,7 @@ class GAN():
 
     def build_generator(self):
         generator = keras.models.Sequential([
-            keras.layers.Dense(256, input_dim=20),
+            keras.layers.Dense(256, input_dim=100),
             keras.layers.LeakyReLU(0.2),
             keras.layers.BatchNormalization(momentum=0.8),
             keras.layers.Dense(512),
@@ -58,7 +58,7 @@ class GAN():
         for epoch in range(epochs):
 
             for images in data:
-                seed = np.random.normal(0, 1, (self.batch_size, 20))
+                seed = np.random.normal(0, 1, (self.batch_size, 100))
                 images = images.reshape(self.batch_size, self.width, self.height, self.channels)
 
                 fake_images = self.generator.predict(seed)
@@ -70,17 +70,17 @@ class GAN():
                 self.combined.train_on_batch(seed, np.ones((self.batch_size, 1)))
                 epoches += 1
                 if epoches % 100 == 0:
-                    seed = np.random.normal(0, 1, (5, 20))
+                    seed = np.random.normal(0, 1, (25, 100))
                     fake_images = self.generator.predict(seed)
-                    fake_images = fake_images.reshape(5, self.width, self.height, self.channels)
+                    fake_images = fake_images.reshape(25, self.width, self.height, self.channels)
 
-                    for n in range(5):
+                    for n in range(25):
                         img = fake_images[n]
                         if self.channels == 3:
                             img = img.reshape(self.width, self.height, self.channels)
                         else:
                             img = img.reshape(self.width, self.height)
-                        plt.subplot(1, 5, n + 1)
+                        plt.subplot(5, 5, n + 1)
                         plt.imshow(img)
                     plt.draw()
                     plt.pause(0.1)
@@ -98,7 +98,7 @@ class SuperGAN():
 
         self.discriminator.compile(optimizer="adam", loss="binary_crossentropy", metrics="accuracy")
         self.discriminator.trainable = False
-        combine_in = keras.layers.Input(shape=(20))
+        combine_in = keras.layers.Input(shape=(100))
         generated = self.generator(combine_in)
         combine_out = self.discriminator(generated)
         self.combined = keras.Model(combine_in, combine_out)
@@ -150,7 +150,7 @@ class SuperGAN():
         for epoch in range(epochs):
 
             for images in data:
-                seed = np.random.normal(0, 1, (self.batch_size, 20))
+                seed = np.random.normal(0, 1, (self.batch_size, 100))
                 images = images.reshape(self.batch_size, self.width, self.height, self.channels)
 
                 fake_images = self.generator.predict(seed)
@@ -162,7 +162,7 @@ class SuperGAN():
                 self.combined.train_on_batch(seed, np.ones((self.batch_size, 1)))
                 epoches += 1
                 if epoches % 100 == 0:
-                    seed = np.random.normal(0, 1, (25, 20))
+                    seed = np.random.normal(0, 1, (25, 100))
                     fake_images = self.generator.predict(seed)
                     fake_images = fake_images.reshape(25, self.width, self.height, self.channels)
 
