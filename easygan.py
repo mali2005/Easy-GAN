@@ -69,7 +69,6 @@ class GAN():
                 self.discriminator.train_on_batch(images, np.ones((self.batch_size, 1)))
                 self.combined.train_on_batch(seed, np.ones((self.batch_size, 1)))
                 epoches += 1
-                print(epoches)
                 if epoches % 100 == 0:
                     seed = np.random.normal(0, 1, (5, 20))
                     fake_images = self.generator.predict(seed)
@@ -109,20 +108,20 @@ class SuperGAN():
         generator = keras.models.Sequential([
             keras.layers.Dense(8 * 8 * 4),
             keras.layers.Reshape((8, 8, 4)),
-            keras.layers.Conv2DTranspose(64, kernel_size=4, strides=2, padding="same"),
+            keras.layers.Conv2DTranspose(16, kernel_size=4, strides=2, padding="same"),
             keras.layers.LeakyReLU(alpha=0.2),
-            keras.layers.BatchNormalization(),
-            keras.layers.Conv2DTranspose(64, kernel_size=4, strides=2, padding="same"),
+            keras.layers.BatchNormalization(momentum=0.5),
+            keras.layers.Conv2DTranspose(16, kernel_size=4, strides=2, padding="same"),
             keras.layers.LeakyReLU(alpha=0.2),
-            keras.layers.BatchNormalization(),
-            keras.layers.Conv2DTranspose(64, kernel_size=4, strides=2, padding="same"),
+            keras.layers.BatchNormalization(momentum=0.5),
+            keras.layers.Conv2DTranspose(16, kernel_size=4, strides=2, padding="same"),
             keras.layers.LeakyReLU(alpha=0.2),
-            keras.layers.BatchNormalization(),
+            keras.layers.BatchNormalization(momentum=0.5),
             keras.layers.Conv2D(3, kernel_size=4, padding="same"),
             keras.layers.Flatten(),
             keras.layers.LeakyReLU(alpha=0.2),
-            keras.layers.BatchNormalization(),
-            keras.layers.Dense(np.prod((self.width, self.height, self.channels)), activation="sigmoid"),            
+            keras.layers.BatchNormalization(momentum=0.5),
+            keras.layers.Dense(np.prod((self.width, self.height, self.channels)), activation="sigmoid"),
             keras.layers.Reshape((self.width, self.height, self.channels))
         ])
         return generator
@@ -134,9 +133,9 @@ class SuperGAN():
             keras.layers.Dense(8*8*8),
             keras.layers.Reshape((8,8,8)),
             keras.layers.LeakyReLU(alpha=0.2),
-            keras.layers.Conv2D(64, kernel_size=4, strides=2, padding="same"),
+            keras.layers.Conv2D(16, kernel_size=4, strides=2, padding="same"),
             keras.layers.LeakyReLU(alpha=0.2),
-            keras.layers.Conv2D(64, kernel_size=4, strides=2, padding="same"),
+            keras.layers.Conv2D(16, kernel_size=4, strides=2, padding="same"),
             keras.layers.LeakyReLU(alpha=0.2),
             keras.layers.Flatten(),
             keras.layers.Dropout(0.2),
@@ -162,7 +161,6 @@ class SuperGAN():
                 self.discriminator.train_on_batch(images, np.ones((self.batch_size, 1)))
                 self.combined.train_on_batch(seed, np.ones((self.batch_size, 1)))
                 epoches += 1
-                print(epoches)
                 if epoches % 100 == 0:
                     seed = np.random.normal(0, 1, (25, 20))
                     fake_images = self.generator.predict(seed)
