@@ -111,14 +111,18 @@ class SuperGAN():
             keras.layers.Reshape((8, 8, 4)),
             keras.layers.Conv2DTranspose(64, kernel_size=4, strides=2, padding="same"),
             keras.layers.LeakyReLU(alpha=0.2),
+            keras.layers.BatchNormalization(),
             keras.layers.Conv2DTranspose(64, kernel_size=4, strides=2, padding="same"),
             keras.layers.LeakyReLU(alpha=0.2),
+            keras.layers.BatchNormalization(),
             keras.layers.Conv2DTranspose(64, kernel_size=4, strides=2, padding="same"),
             keras.layers.LeakyReLU(alpha=0.2),
+            keras.layers.BatchNormalization(),
             keras.layers.Conv2D(3, kernel_size=4, padding="same"),
             keras.layers.Flatten(),
             keras.layers.LeakyReLU(alpha=0.2),
-            keras.layers.Dense(np.prod((self.width, self.height, self.channels)), activation="sigmoid"),
+            keras.layers.BatchNormalization(),
+            keras.layers.Dense(np.prod((self.width, self.height, self.channels)), activation="sigmoid"),            
             keras.layers.Reshape((self.width, self.height, self.channels))
         ])
         return generator
