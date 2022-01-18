@@ -48,6 +48,6 @@ Then GAN start plotting images when training. You will see plotted images look a
 I hope you can understand other parts of example.
 
 
-#Something about SuperGAN
+# Something about SuperGAN
 
 I am developing supergan now. Maybe one day it is going to be better then normal gan.
