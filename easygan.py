@@ -82,3 +82,60 @@ class GAN():
                     plt.draw()
                     plt.pause(0.1)
                     fig.clear()
+
+                    
+                    
+class rand_layer(keras.layers.Layer):
+    def call(self, inputs):
+        return inputs*tf.random.uniform((1,),0.9,1)
+
+class TipGAN():
+    def __init__(self) -> None:
+        try:
+            shutil.rmtree("downloads")
+        except Exception:
+            pass
+        self.model = self.build_model()
+        self.model.compile(optimizer="adam",loss="binary_crossentropy",metrics=["accuracy"])
+    
+    def build_model(self):
+        model = keras.models.Sequential([
+            keras.layers.Input(shape=(100)),
+            keras.layers.Dense(400,activation="relu"),
+            keras.layers.BatchNormalization(momentum=0.8),
+            keras.layers.Dense(2500,activation="sigmoid"),
+            rand_layer(),
+            keras.layers.Reshape((50,50)),            
+        ])
+
+        return model
+
+    def load_images_from_folder(self,folder):
+        images = []
+        for filename in os.listdir(folder):
+            img = cv2.imread(os.path.join(folder,filename),cv2.IMREAD_GRAYSCALE)
+            img = cv2.resize(img,(50,50))
+            if img is not None:
+                images.append(img)
+        return np.array(images).astype(np.float32)/255
+
+    def draw(self,text,epochs=10,interval= 10,save=False):
+        try:
+            shutil.rmtree(".//out")
+            os.mkdir(".//out")
+        except Exception:
+            pass
+        response = google_images_download.googleimagesdownload()
+        arguments = {"keywords":text,"limit":5,"print_urls":True}
+        paths = response.download(arguments)
+        data = self.load_images_from_folder(".//downloads//"+text)
+        for i in range(epochs):
+            print(i)
+            seed = np.random.normal(0.9,1,(5,100))
+            self.model.train_on_batch(seed,data)
+            if i % interval == 0:
+                seed2 = np.random.normal(0.9,1,(1,100))
+                img = self.model.predict(seed2).reshape(50,50)
+                plt.imshow(img,cmap="binary")
+                plt.imsave(".//out//"+str(i//interval)+".png",img)
+                plt.pause(0.1)                   
