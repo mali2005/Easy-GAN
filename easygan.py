@@ -139,3 +139,97 @@ class TipGAN():
                 plt.imshow(img,cmap="binary")
                 plt.imsave(".//out//"+str(i//interval)+".png",img)
                 plt.pause(0.1)                   
+
+                
+class TipGANwithdis():
+    def __init__(self) -> None:
+        try:
+            shutil.rmtree("downloads")
+        except Exception:
+            pass
+        self.model = self.build_model()
+        self.discriminator = self.build_discriminator()
+        self.discriminator.compile(optimizer="adam",loss="binary_crossentropy")
+        self.discriminator.trainable = False
+
+        input = keras.layers.Input(shape=(100))
+        gen = self.model(input)
+        dis = self.discriminator(gen)
+        self.combine = keras.Model(input,dis)
+        self.combine.compile(optimizer="adam",loss="binary_crossentropy")
+    
+    def build_model(self):
+        model = keras.models.Sequential([
+            keras.layers.Input(shape=(100)),
+            keras.layers.Dense(400,activation="relu"),
+            keras.layers.BatchNormalization(momentum=0.8),
+            keras.layers.Dense(2500,activation="relu"),
+            rand_layer(),
+            keras.layers.BatchNormalization(momentum=0.8),
+            keras.layers.Dense(7500,activation="sigmoid"),
+            rand_layer(),
+            keras.layers.Reshape((50,50,3)),            
+        ])
+
+        return model
+
+    def build_discriminator(self):
+        model = keras.models.Sequential([
+            keras.layers.Input(shape=(50,50,3)),
+            keras.layers.Flatten(),
+            keras.layers.Dense(400,"relu"),
+            keras.layers.Dense(20,"relu"),
+            keras.layers.Dense(1,"sigmoid")
+        ])
+
+        return model
+
+    def load_images_from_folder(self,folder):
+        images = []
+        for filename in os.listdir(folder):
+            img = cv2.imread(os.path.join(folder,filename))
+            img = cv2.resize(img,(50,50))
+            if img is not None:
+                images.append(img)
+        return np.array(images).astype(np.float32)/255
+
+    def draw(self,text,epochs=10,interval= 10,save=False):
+        try:
+            os.mkdir(".//out")
+        except Exception:
+            pass
+        response = google_images_download.googleimagesdownload()
+        arguments = {"keywords":text,"limit":3,"print_urls":True}
+        paths = response.download(arguments)
+        data = self.load_images_from_folder(".//downloads//"+text)
+        for i in range(epochs):
+
+            print(i)
+            seed = np.random.normal(0.9,1,(3,100))
+            fake_images = self.model.predict(seed)
+            self.discriminator.train_on_batch(data,np.ones((3,1)))
+            self.discriminator.train_on_batch(fake_images,np.zeros((3,1)))
+
+            self.combine.train_on_batch(seed,np.ones((3,1)))
+
+
+            if i % interval == 0:
+                seed2 = np.random.normal(0.9,1,(1,100))
+                img1 = self.model.predict(seed2).reshape(50,50,3)
+                seed2 = np.random.normal(0.9,1,(1,100))
+                img2 = self.model.predict(seed2).reshape(50,50,3)
+                seed2 = np.random.normal(0.9,1,(1,100))
+                img3 = self.model.predict(seed2).reshape(50,50,3)
+                seed2 = np.random.normal(0.9,1,(1,100))
+                img4 = self.model.predict(seed2).reshape(50,50,3)
+
+                plt.subplot(2,2,1)
+                plt.imshow(img1,cmap="binary")
+                plt.subplot(2,2,2)
+                plt.imshow(img2,cmap="binary")
+                plt.subplot(2,2,3)
+                plt.imshow(img3,cmap="binary")
+                plt.subplot(2,2,4)
+                plt.imshow(img4,cmap="binary")
+                plt.savefig(".//out//"+str(i//interval)+".png")
+                plt.pause(0.1)
