@@ -46,3 +46,7 @@ gan.draw(draw,epochs=epochs,interval=interval,save=True)
 You can see we sliced 60000 mnist train datas to 3000x20. 20 is our batch size. Batch size is meaning how many images can use at a train step.
 Then GAN start plotting images when training. You will see plotted images look alike data images. Plotted images are predictions of image generator.
 I hope you can understand other parts of example.
+
+# Explanation of TipGAN
+
+TipGAN takes data from internet and than try to draw that pictures in size of 50x50 grayscale. This is for now. I am going to make it for rgb images. Just wait.
