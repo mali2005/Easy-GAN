@@ -21,6 +21,26 @@ gan = GAN(20,28,28,1)
 gan.train(2, x,5,4)
 ```
 
+# Example TipGAN
+```python
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+import tensorflow.keras as keras
+import numpy as np
+import matplotlib.pyplot as plt
+from easygan import TipGAN
+
+gan =TipGAN()
+
+print("What do you want to draw?")
+draw = str(input())
+print("How many epochs do you want?")
+epochs = int(input())
+print("How many intervals do you want?")
+interval = int(input())
+gan.draw(draw,epochs=epochs,interval=interval,save=True)
+```
+
 # Explanation of Example
 
 You can see we sliced 60000 mnist train datas to 3000x20. 20 is our batch size. Batch size is meaning how many images can use at a train step.
