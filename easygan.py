@@ -106,9 +106,11 @@ class TipGAN():
             keras.layers.Input(shape=(100)),
             keras.layers.Dense(400,activation="relu"),
             keras.layers.BatchNormalization(momentum=0.8),
-            keras.layers.Dense(2500,activation="sigmoid"),
+            keras.layers.Dense(2500,activation="relu"),
+            keras.layers.BatchNormalization(momentum=0.8),
+            keras.layers.Dense(7500,activation="sigmoid"),
             rand_layer(),
-            keras.layers.Reshape((50,50)),            
+            keras.layers.Reshape((50,50,3)),            
         ])
 
         return model
@@ -116,7 +118,7 @@ class TipGAN():
     def load_images_from_folder(self,folder):
         images = []
         for filename in os.listdir(folder):
-            img = cv2.imread(os.path.join(folder,filename),cv2.IMREAD_GRAYSCALE)
+            img = cv2.imread(os.path.join(folder,filename))
             img = cv2.resize(img,(50,50))
             if img is not None:
                 images.append(img)
@@ -124,7 +126,6 @@ class TipGAN():
 
     def draw(self,text,epochs=10,interval= 10,save=False):
         try:
-            shutil.rmtree(".//out")
             os.mkdir(".//out")
         except Exception:
             pass
@@ -138,10 +139,24 @@ class TipGAN():
             self.model.train_on_batch(seed,data)
             if i % interval == 0:
                 seed2 = np.random.normal(0.9,1,(1,100))
-                img = self.model.predict(seed2).reshape(50,50)
-                plt.imshow(img,cmap="binary")
-                plt.imsave(".//out//"+str(i//interval)+".png",img)
-                plt.pause(0.1)                   
+                img1 = self.model.predict(seed2).reshape(50,50,3)
+                seed2 = np.random.normal(0.9,1,(1,100))
+                img2 = self.model.predict(seed2).reshape(50,50,3)
+                seed2 = np.random.normal(0.9,1,(1,100))
+                img3 = self.model.predict(seed2).reshape(50,50,3)
+                seed2 = np.random.normal(0.9,1,(1,100))
+                img4 = self.model.predict(seed2).reshape(50,50,3)
+
+                plt.subplot(2,2,1)
+                plt.imshow(img1,cmap="gist_rainbow")
+                plt.subplot(2,2,2)
+                plt.imshow(img2,cmap="gist_rainbow")
+                plt.subplot(2,2,3)
+                plt.imshow(img3,cmap="gist_rainbow")
+                plt.subplot(2,2,4)
+                plt.imshow(img4,cmap="gist_rainbow")
+                plt.savefig(".//out//"+str(i//interval)+".png")
+                plt.pause(0.1)                
 
                 
 class TipGANwithdis():
@@ -227,12 +242,12 @@ class TipGANwithdis():
                 img4 = self.model.predict(seed2).reshape(50,50,3)
 
                 plt.subplot(2,2,1)
-                plt.imshow(img1,cmap="binary")
+                plt.imshow(img1,cmap="gist_rainbow")
                 plt.subplot(2,2,2)
-                plt.imshow(img2,cmap="binary")
+                plt.imshow(img2,cmap="gist_rainbow")
                 plt.subplot(2,2,3)
-                plt.imshow(img3,cmap="binary")
+                plt.imshow(img3,cmap="gist_rainbow")
                 plt.subplot(2,2,4)
-                plt.imshow(img4,cmap="binary")
+                plt.imshow(img4,cmap="gist_rainbow")
                 plt.savefig(".//out//"+str(i//interval)+".png")
                 plt.pause(0.1)
